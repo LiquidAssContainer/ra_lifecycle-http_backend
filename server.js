@@ -43,11 +43,15 @@ router
   })
 
   .post('/notes', async (ctx, next) => {
-    const { content } = ctx.request.body;
-    if (typeof content === 'string') {
-      notes.push({ content, id: uuid.v4() });
+    const content = ctx.request.body;
+    if (typeof content !== 'string') {
+      ctx.status = 400;
+      return await next();
     }
-    ctx.status = 204;
+    const newNote = { content, id: uuid.v4() };
+    notes.push(newNote);
+
+    ctx.body = newNote;
     return await next();
   })
 
